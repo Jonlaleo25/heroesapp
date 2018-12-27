@@ -1,0 +1,887 @@
+Se trae toda la informacion de Firebase
+
+https://firebase.google.com/docs/reference/rest/database/?authuser=0
+
+
+
+
+
+POST
+
+1.- https://firebase.google.com/docs/reference/rest/database/?authuser=0
+
+copiar la url que se encuentra en firebase : https://heroesapp-bfef6.firebaseio.com/heroes.json
+
+En el archivo de heroes.services.ts poner lo siguiente
+
+
+Nota : se instala rxjs = nom i rxjs -S
+
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders} from '@angular/common/http'
+import { Heroe } from '../interfaces/heroe.interfaces';
+import 'rxjs/Rx'
+
+ //import 'Rxjs-compat';
+//import { filter, map } from 'rxjs/operators';
+//import { map } from 'rxjs/operators';
+//import 'rxjs/add/operator/map';
+//import {map} from 'rxjs/operators';
+
+
+
+@Injectable({
+  providedIn: 'root'
+})
+export class HeroesService {
+
+  heroesURL:string = "https://heroesapp-bfef6.firebaseio.com/heroes.json"
+
+  constructor( private http:HttpClient) { }
+
+  nuevoHeroe (heroe:Heroe){
+
+    // Se convierte el string perfecto de JSON a string
+    let body = JSON.stringify( heroe );
+    // definicion del encabezado
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+
+
+    return this.http.post( this.heroesURL,body, {headers}  )
+    .map(res=>{
+      return res;
+
+    })
+
+
+  }
+
+
+
+}
+
+
+2.- Agregar en el archivo heroe.components.ts
+
+
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from "@angular/forms";
+import { Heroe } from '../../interfaces/heroe.interfaces';
+import { HeroesService} from '../../services/heroes.service';
+import { Router} from "@angular/router";
+
+
+@Component({
+  selector: 'app-heroe',
+  templateUrl: './heroe.component.html',
+  styles: []
+})
+export class HeroeComponent implements OnInit {
+
+  heroe:Heroe={
+    nombre:"",
+    bio:"",
+    casa:"Marvel",
+  }
+
+  constructor( private _heroesService : HeroesService,
+               private router: Router) { }
+
+  ngOnInit() {
+  }
+
+  guardar() {
+
+    this._heroesService.nuevoHeroe(this.heroe)
+          .subscribe(data => {
+            console.log(data);
+    this.router.navigate(['/heroe', data['name']]);
+        }, error => console.log(error));
+        console.log(this.heroe);
+    }
+
+
+
+}
+
+3.- en el archivo de heroes.services.ts
+
+
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders} from '@angular/common/http'
+import { Heroe } from '../interfaces/heroe.interfaces';
+import 'rxjs/Rx'
+
+ //import 'Rxjs-compat';
+//import { filter, map } from 'rxjs/operators';
+//import { map } from 'rxjs/operators';
+//import 'rxjs/add/operator/map';
+//import {map} from 'rxjs/operators';
+
+
+
+@Injectable({
+  providedIn: 'root'
+})
+export class HeroesService {
+
+  heroesURL:string = "https://heroesapp-bfef6.firebaseio.com/heroes.json"
+
+  constructor( private http:HttpClient) { }
+
+  nuevoHeroe (heroe:Heroe){
+
+    // Se convierte el string perfecto de JSON a string
+    let body = JSON.stringify( heroe );
+    // definicion del encabezado
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+
+
+    return this.http.post( this.heroesURL,body, {headers}  )
+    .map(res=>{
+      return res;
+
+    })
+
+
+  }
+
+}
+
+
+
+************************************************************************************************************************************************************************
+
+PUT
+
+Estano en el archivo de heroes.component.ts
+
+Y copiar el metodo de : 
+
+
+
+  nuevoHeroe (heroe:Heroe){
+
+    // Se convierte el string perfecto de JSON a string
+    let body = JSON.stringify( heroe );
+    // definicion del encabezado
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+
+
+    return this.http.post( this.heroesURL,body, {headers}  )
+    .map(res=>{
+      return res;
+
+    })
+
+
+  }
+ 
+
+Ya que es igual ya que habra un cambio en el metodo "actualizarHeroe"
+
+
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders} from '@angular/common/http'
+import { Heroe } from '../interfaces/heroe.interfaces';
+import 'rxjs/Rx'
+
+ //import 'Rxjs-compat';
+//import { filter, map } from 'rxjs/operators';
+//import { map } from 'rxjs/operators';
+//import 'rxjs/add/operator/map';
+//import {map} from 'rxjs/operators';
+
+
+
+@Injectable({
+  providedIn: 'root'
+})
+
+export class HeroesService {
+
+  heroesURL:string = "https://heroesapp-bfef6.firebaseio.com/heroes.json"
+  heroeURL : string ="https://heroesapp-bfef6.firebaseio.com/heroes/";
+  constructor( private http:HttpClient) { }
+
+// POST
+  nuevoHeroe (heroe:Heroe){
+
+    // Se convierte el string perfecto de JSON a string
+    const body = JSON.stringify( heroe );
+    // definicion del encabezado
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+
+
+    return this.http.post( this.heroesURL,body, {headers}  )
+    .map(res=>{
+
+      return res;
+
+    })
+
+
+  }
+
+     //Put
+
+
+     actualizarHeroe (heroe:Heroe, key$:string){
+
+      // Se convierte el string perfecto de JSON a string
+      let body = JSON.stringify( heroe );
+      // definicion del encabezado
+      let headers = new HttpHeaders({
+        'Content-Type': 'application/json'
+      });
+
+       // crea con la url osea concatena con el parametro para qeu sea dinamico
+      let url =  `${ this.heroeURL }/${ key$}.json`
+
+
+      return this.http.put( url ,body, {headers}  )
+      .map(res=>{
+        return res;
+
+      })
+
+
+    }
+
+
+
+
+
+
+}
+
+
+
+
+
+Y en en el archivo de heroe.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from "@angular/forms";
+import { Heroe } from '../../interfaces/heroe.interfaces';
+import { HeroesService} from '../../services/heroes.service';
+import { Router, ActivatedRoute} from "@angular/router";
+import { PARAMETERS } from '@angular/core/src/util/decorators';
+
+
+@Component({
+  selector: 'app-heroe',
+  templateUrl: './heroe.component.html',
+  styles: []
+})
+export class HeroeComponent implements OnInit {
+
+  heroe:Heroe={
+    nombre:"",
+    bio:"",
+    casa:"Marvel",
+  }
+
+  // poner una bandera para simuar
+
+  nuevo : boolean = false;
+  id:string ;
+
+
+  constructor( private _heroesService : HeroesService,
+               private router: Router,
+               private activatedRoute:ActivatedRoute) {
+
+                this.activatedRoute.params
+                .subscribe(parametros =>{
+
+                  console.log(parametros);
+                  // hayq eu acordarse de donde proviene el id como se ingreso en el route
+                  // {path:'heroe/:id', component: HeroeComponent},
+                  this.id = parametros['id'];
+
+
+
+                })
+               }
+
+  ngOnInit() {
+  }
+
+  guardar() {
+    console.log(this.heroe);
+
+    if( this.id == "nuevo"){
+
+      // INSERTADO
+
+      this._heroesService.nuevoHeroe(this.heroe)
+      .subscribe(data => {
+        console.log(data);
+      this.router.navigate(['/heroe', data['name']]);
+    }, error => console.log(error));
+    console.log(this.heroe);
+
+    }else{
+
+      // ACTUALIZADO
+
+        this._heroesService.actualizarHeroe(this.heroe, this.id)
+        .subscribe(data => {
+          console.log(data);
+        // this.router.navigate(['/heroe', data['name']]);
+            }, error => console.log(error));
+            console.log(this.heroe);
+
+    }
+
+
+
+
+    }
+
+
+
+}
+
+
+
+GET  
+
+
+En el archivo de heroes.service.ts
+
+se reliza lo saiguiente 
+
+se crea un nuevo metoto de tipo get 
+
+
+  getHeroe( key$:string) {
+
+    let url = `${this.heroeURL}/${ key$}.json`;
+    return this.http.get( url )
+    .map( res =>{
+         return res;
+    })
+  }
+
+
+en ele archivo de heroe.component.ts se agrega los siguiente en el constructor
+
+
+
+  constructor( private _heroesService : HeroesService,
+               private router: Router,
+               
+               private activatedRoute:ActivatedRoute) {
+
+                this.activatedRoute.params
+                .subscribe(parametros =>{
+
+                  console.log(parametros);
+                  // hayq eu acordarse de donde proviene el id como se ingreso en el route
+                  // {path:'heroe/:id', component: HeroeComponent},
+                  this.id = parametros['id'];
+                  if(this.id !== "nuevo"){
+
+                    this._heroesService.getHeroe( this.id)
+                    .subscribe( heroe => this.heroe = heroe )
+
+                  }
+
+
+
+                })
+               }
+
+
+Despues se agrega un boton en el archivo de heroe.component.ts
+
+<button (click)="agregarNuevo(forma)"
+        [
+        class="btn btn-outline-success">
+        Nuevo heroe
+</button>
+
+y en el archivo de heroe.component.ts se escribe lo siguiente
+
+  // GET
+    agregarNuevo( forma:NgForm ){
+
+      //alert("pasa")
+
+      this.router.navigate(['/heroe', 'nuevo']);
+      console.log(forma)
+
+      forma.reset({
+        casa:"Marvel"
+      });
+
+    }
+
+
+Obtener el listado de heroes
+
+En el archivo  heroes.services.ts se crea otro metodopara traer toda la informacion 
+
+
+
+// obtener todos los registros del  firbase
+  getHeroes( ) {
+
+
+    return this.http.get( this.heroesURL )
+    .map( res =>{
+         return res;
+    })
+  }
+
+
+
+Despues en el archivo de heroes.component.ts
+
+
+
+import { Component, OnInit } from '@angular/core';
+import { HeroesService } from '../../services/heroes.service';
+
+@Component({
+  selector: 'app-heroes',
+  templateUrl: './heroes.component.html',
+  styleUrls: ['./heroes.component.css']
+})
+export class HeroesComponent implements OnInit {
+
+  heroes:any[] = [];
+
+  constructor( private _heroeService:HeroesService) {
+
+    this._heroeService.getHeroes()
+    .subscribe( data  => {
+
+      console.log(data)
+      this.heroes = data ;
+      // for( let key$ in data ){
+      //   console.log( data[key$]);
+      //   this.heroes.push( data [key$]);
+
+      // }
+    })
+  }
+
+  ngOnInit() {
+  }
+
+}
+
+
+
+
+
+
+
+
+
+Realizar y globalizar el objeto de la key o obtener la key cuando se raliza la key, entonces se reliza lo siguiente
+
+es hacer un "pipe" para ello se reliza un nuevo folder llamado pipes dentro de la app 
+
+despues en la terminal agregar un componente : ng g p pipes/keys
+
+
+Despues estando en el archivo de pipe.component.ts
+
+
+
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'keys',
+  pure:false
+})
+export class KeysPipe implements PipeTransform {
+
+  transform(value: any): any {
+
+    // se inica con un arreglo vacio
+
+    let keys = [];
+    // value es el objeto que viene del firebase
+    for( let key in value){
+      // esto es un arreglo de llaves
+      keys.push(key)
+    }
+
+    return keys;
+  }
+
+}
+
+
+
+entrando en el archivo de heroes.component.ts
+
+
+
+import { Component, OnInit } from '@angular/core';
+import { HeroesService } from '../../services/heroes.service';
+
+@Component({
+  selector: 'app-heroes',
+  templateUrl: './heroes.component.html',
+  styleUrls: ['./heroes.component.css']
+})
+export class HeroesComponent implements OnInit {
+
+  heroes:any[] = [];
+
+  constructor( private _heroeService:HeroesService) {
+
+    this._heroeService.getHeroes()
+    .subscribe( data  => {
+
+      console.log(data)
+      this.heroes = data ;
+      // for( let key$ in data ){
+      //   console.log( data[key$]);
+      //   this.heroes.push( data [key$]);
+
+      // }
+    })
+  }
+
+  ngOnInit() {
+  }
+
+}
+
+
+despues en el archivo de html de heroes.component.html
+
+
+
+        <tbody>
+          <tr *ngFor="let k of heroes | keys; let i = index">
+            <td>{{ i + 1}}</td>
+            <td>{{ heroes[k].nombre }}</td>
+            <td>{{heroes[k].casa}}</td>
+            <td>{{heroes[k].bio}}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+
+
+
+DELETE 
+
+
+
+en el archivo de heroes.component.html se agrega 
+
+
+          <tr *ngFor="let k of heroes | keys; let i = index">
+            <td>{{ i + 1}}</td>
+            <td>{{ heroes[k].nombre }}</td>
+            <td>{{heroes[k].casa}}</td>
+            <td>{{heroes[k].bio}}</td>
+            <td>
+
+              <button  [routerLink]="[ '/heroe', k ]"
+                      type="button"
+                      class="btn btn-outline-info border-light">
+                      Editar
+              </button>
+
+              <button  (click)="borrarHeroe(k)"
+                        type="button"
+                        class="btn btn-outline-dark border-danger">
+                        Eliminar
+             </button>
+
+            </td>
+          </tr>
+
+
+En el archivo de heroes.component.ts se agrega el metodo borrarHeroe que se relizo en heroes.component.html
+
+  borrarHeroe(key$:string){
+
+    this._heroeService.borrarHeroe(key$)
+        .subscribe( data =>{
+          console.log(data);
+
+        })
+
+  }
+
+
+
+Despues en el archivo de heroes.services.ts en la cual se agrega eñ metodo de borrarHeroe( key$:string)
+
+  borrarHeroe( key$:string){
+
+    let url= `${ this.heroeURL}/${ key$ }.json`;
+    return this.http.delete( url)
+               .map( res => {
+                 console.log(res);
+                 return res;
+               })
+
+  }
+
+si es null es correcto y elimina el dato
+
+despues en el archivo de heroes.component.ts se reliza cambios en el metodo de borrarHeroe
+
+
+
+  borrarHeroe(key$:string){
+
+    this._heroeService.borrarHeroe(key$)
+        .subscribe( data =>{
+
+          console.log(data);
+
+          if(data ){
+            console.error(data);
+          }else {
+            // todo bien
+
+            delete this.heroes[key$]
+          }
+
+        })
+
+  }
+
+
+
+
+maquillaje de la App
+
+
+se modifican los siguientes archivos
+
+<h1>Heroe <small>{{heroe.nombre}}</small></h1>
+<hr>
+<button [routerLink]="['heroes','nuevo']"
+        class="btn btn-outline-danger">
+        regresar
+</button>
+
+<button (click)="agregarNuevo(forma)"
+        type="button"
+        class="btn btn-outline-success">
+        Nuevo heroe
+</button>
+<hr>
+
+<div class="row animated fadeIn slow">
+  <div class="col-md-12">
+    <form (ngSubmit)="guardar()" #forma="ngForm">
+      <div class="form-group">
+        <label >nombre</label>
+
+        <input [(ngModel)]="heroe.nombre"
+               name="nombre"
+              type="text"
+              class="form-control border border-secondary"
+              placeholder="Nombre de heroe"
+              required>
+      </div>
+
+      <div class="form-group">
+        <label >Casa</label>
+         <select [(ngModel)]="heroe.casa"
+                   name="casa"
+                  class="form-control border border-secondary">
+          <option value="Marvel">Marvel</option>
+          <option value="DC">DC</option>
+         </select>
+      </div>
+
+      <div class="form-group">
+        <label >Bio</label>
+         <textarea [(ngModel)]="heroe.bio"
+                    name="bio"
+                    type="text"
+                    class="form-control border border-secondary"
+                    >
+
+         </textarea>
+      </div>
+
+      <div class="form-group">
+       <button [disabled] ="!forma.valid"
+              type="submit"
+              class="btn btn-outline-primary">Guardar Cambios</button>
+      </div>
+
+
+
+    </form>
+  </div>
+</div>
+
+
+
+
+****************************************************************************************
+
+
+
+<h1>Heroes</h1>
+<hr/>
+
+<div class="row">
+  <div class="col-md-12 text-right">
+    <button [routerLink]="['/heroe','nuevo']"
+            class="btn btn-outline-primary">
+      Nuevo
+    </button>
+  </div>
+</div><br>
+
+<div class="row animated fadeIn slow">
+  <div class="col-md-12">
+     <div class="table-responsive">
+      <table class="table table-striped table-dark">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Casa</th>
+            <th scope="col">Bio</th>
+            <th class="text-right" scope="col" >Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let k of heroes | keys; let i = index">
+            <td>{{ i + 1}}</td>
+            <td>{{ heroes[k].nombre }}</td>
+            <td>{{heroes[k].casa}}</td>
+            <td>{{heroes[k].bio}}</td>
+            <td class="text-right w120">
+
+              <button  [routerLink]="[ '/heroe', k ]"
+                      type="button"
+                      class="btn btn-outline-info border-light">
+                      Editar
+              </button>
+
+              <button  (click)="borrarHeroe(k)"
+                        type="button"
+                        class="btn btn-outline-dark border-danger">
+                        Eliminar
+             </button>
+
+            </td>
+          </tr>
+          <tr>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="(heroes | keys).length === 0 && !loading"
+          class="alert alert-warning fadeIn slow" role="alert">
+         <strong>No hay </strong>  registros que mostrar
+      </div>
+
+
+      <div *ngIf="loading"
+            class="alert alert-info fadeIn slow" role="alert">
+          <strong> Cargando ... </strong>  tenga paciencia
+      </div>
+
+     </div>
+  </div>
+</div>
+
+
+**************************************************************************************************************************
+
+
+import { Component, OnInit } from '@angular/core';
+import { HeroesService } from '../../services/heroes.service';
+
+@Component({
+  selector: 'app-heroes',
+  templateUrl: './heroes.component.html',
+  styleUrls: ['./heroes.component.css']
+})
+export class HeroesComponent implements OnInit {
+
+  heroes:any[] = [];
+
+  loading: boolean= true;
+
+  constructor( private _heroeService:HeroesService) {
+
+    this._heroeService.getHeroes()
+    .subscribe( data  => {
+
+      //console.log(data)
+      // this.loading = false;
+      setTimeout( () => {
+                         this.loading = false;
+                         this.heroes = data ;
+                         }, 2000);
+
+
+
+
+      // for( let key$ in data ){
+      //   console.log( data[key$]);
+      //   this.heroes.push( data [key$]);
+
+      // }
+    })
+  }
+
+  ngOnInit() {
+  }
+
+
+  borrarHeroe(key$:string){
+
+    this._heroeService.borrarHeroe(key$)
+        .subscribe( data =>{
+
+          console.log(data);
+
+          if(data ){
+            console.error(data);
+          }else {
+            // todo bien
+
+            delete this.heroes[key$]
+          }
+
+        })
+
+  }
+
+}
+
+
+
+
+
+

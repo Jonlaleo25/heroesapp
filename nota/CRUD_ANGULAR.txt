@@ -1,0 +1,293 @@
+Angular 7 CRUD FireBAse
+
+1 - ir a firebase y crear un nuevo proyect con la tabla 
+    liga : https://console.firebase.google.com
+
+2.- Instalacion de Bootstrap 4 , jquery utilizando:
+ npm i bootstrap jquey -S
+
+3 ya cuando se hay aonstalado las librerias ir a angular.json
+ ingresar en la parte estilos y jquery la ruta donde se instalo los paquetes
+
+estyles : "./node_modules/bootstrap/dist/css/bootstrap.css",
+
+jquerys :  "./node_modules/jquery/dist/jquery.min.js",
+              "./node_modules/bootstrap/dist/js/bootstrap.js"
+
+3 RUtas 
+   crear un acrpeta de componentes 
+    y para relizar en la consola los componentes es :
+
+     ng g c components/heroes -is 
+     ng g c components/heroe -is 
+
+
+   Crear un archivo dentro de la app
+
+   app.routes.ts
+ y dentro de ella swe crear el router
+
+import { Routes, RouterModule } from '@angular/router';
+import { NgModule, Component } from '@angular/core';
+import{ HeroesComponent} from './components/heroes/heroes.component';
+import { HeroeComponent } from './components/heroes/heroe.component';
+
+
+const routes: Routes = [
+
+{path:'heroes',  component: HeroesComponent},
+{path:'heroe/:id', component: HeroeComponent},
+{ path: '**', pathMatch: 'full',  redirectTo:'heroes' },
+
+];
+
+
+export const APP_ROUTING = RouterModule.forRoot(routes);
+
+
+NOTA : Importar en el archivo de app.modules.ts 
+
+import { FormsModule} from '@angular/forms';
+import { HttpClientModule} from '@angular/common/http';
+
+y 
+
+import { APP_ROUTING } from './app.routes'
+
+
+despues imortarlo en el array de imports
+
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule,
+    APP_ROUTING
+  ],
+
+4 .- Comprovacion del router :
+
+  en el archivo de app.component.html ingresar el tag de :
+
+        <router-outlet></router-outlet>
+
+
+5.- En el formulario de diseño y estyles
+ en el aarchivo de heroes.component.html agregar la maquetacion 
+
+
+<h1>Heroes</h1>
+<hr>
+
+<div class="row">
+  <div class="col-md-12">
+     <div class="table-responsive">
+      <table class="table table-striped table-dark">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Casa</th>
+            <th scope="col">Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+     </div>
+  </div>
+</div>
+
+6.- En la parte del boton de nuevo o agregar un heroe se hace a si 
+
+<div class="row">
+  <div class="col-md-12 text-right">
+    <button [routerLink]="['/heroe','nuevo']"    -->    <!-- Esa ruta es igual a {path:'heroe/:id', component: HeroeComponent}, -->
+            class="btn btn-outline-primary">
+      Nuevo
+    </button>
+  </div>
+</div><br>
+
+
+7.- despues en el archivo de heroe.component.html
+
+
+<h1>Heroe <small>nombre ....</small></h1>
+<button [routerLink]="['heroes','nuevo']"
+        class="btn btn-outline-danger">regresar</button>
+
+
+<hr>
+
+<div class="row animated fadeIn slow">
+  <div class="col-md-12">
+    <form >
+      <div class="form-group">
+        <label >nombre</label>
+        <input
+              type="text" name =""
+              class="form-control border border-secondary"
+              placeholder="Nombre de heroe"
+              required>
+      </div>
+
+      <div class="form-group">
+        <label >Casa</label>
+         <select class="form-control border border-secondary" name="">
+          <option value="Marvel">Marvel</option>
+          <option value="DC">DC</option>
+         </select>
+      </div>
+
+      <div class="form-group">
+        <label >Bio</label>
+         <textarea type="text" name =""
+                    class="form-control border border-secondary"
+
+                    required>
+
+         </textarea>
+      </div>
+
+      <div class="form-group">
+       <button type="button" class="btn btn-outline-primary">Guardar Cambios</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+
+8.- Creando servicios heroes 
+
+    En el form del archivo de heroe.component.html ingresar:
+
+  <form (ngSubmit)="guardar()"> 
+
+para postear la informacion 
+
+Y tambien en el mismo ene l form poner una referencia :
+
+ #forma="ngForm"
+
+9.- En el archivo de heroe.component.ts 
+
+se importa : import { NgForm } from "@angular/forms";
+
+10.- dentro del componente del archivo de heroe.component.html ingresar ...
+
+
+ heroe:any={
+    
+  }
+
+11..- Despues crear una carpeta y  archivo dentro de la app la carpeta de llamara interfaces y el archivo se llamara " heroe.interfaces.ts"
+
+y dentro de ese archivo se crea una interface con ciertos campos
+
+export interface Heroe{
+    nombre: string;
+    casa:string;
+    bio : string;
+    key$:string;
+}
+
+12.- Regresando en heroe.component.ts
+
+importar la interface : import {Heroe} from '../../interfaces/heroe.interfaces';
+y lo que que "any" ingresar " Heroe"
+y dentro de la misma "  heroe:Heroe " Ingresar lo sigueinte : 
+
+ heroe:Heroe={
+    nombre:"",
+    casa:"Marvel",
+    bio:""
+  }
+
+con ello aun mandara error ya que se tiene que regresar en el archvivo de heroe.interfaces.ts y en el 
+
+key$:string; cambiar  key$?:string; para que sea opcional hasta el momento.
+
+
+13.- crear dentro de la app una carpeta llamada "services"
+     despues en la consola ingresar ng g s services/heroes
+ 
+14.- Se importa // services
+
+import {HeroesService} from "./services/heroes.service"
+
+dentro del archivo app.modules.ts como tambien asignarlo en el arreglo de providers[HeroesService]
+
+15.- Se envia la informacion en el service en heroe.component.html
+
+y se agrega ene l input del nombre  [(ngModel)]="heroe.nombre" name="nombre"
+
+     <input [(ngModel)]="heroe.nombre"
+               name="nombre"
+              type="text"
+              class="form-control border border-secondary"
+              placeholder="Nombre de heroe"
+              required>
+
+
+y en la casa se agrega :
+
+ <div class="form-group">
+        <label >Casa</label>
+         <select [(ngModel)]="heroe.casa"
+                   name="casa"
+                  class="form-control border border-secondary">
+          <option value="Marvel">Marvel</option>
+          <option value="DC">DC</option>
+         </select>
+      </div>
+
+y en el bio 
+
+    <textarea  [(ngModel)]="heroe.bio"
+                    name="bio"
+                    type="text" name =""
+                    class="form-control border border-secondary"
+                    >
+
+         </textarea>
+
+
+ya despues en el mismo archivo poner en el boton una validacion 
+
+      <div class="form-group">
+        <label >Bio</label>
+         <textarea [(ngModel)]="heroe.bio"
+                    name="bio"
+                    type="text"
+                    class="form-control border border-secondary"
+                    >
+
+         </textarea>
+
+
+y en el boton se ingresa 
+
+   <div class="form-group">
+       <button [disabled] ="!forma.valid"
+              type="submit"
+              class="btn btn-outline-primary">Guardar Cambios</button>
+      </div>
+
+
+
+
+
